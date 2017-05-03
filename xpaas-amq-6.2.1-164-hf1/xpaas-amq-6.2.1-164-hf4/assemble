@@ -1,0 +1,28 @@
+#!/bin/sh
+
+SRCCONF=/tmp/src/configuration
+SRCPATCH=/tmp/src/patch
+
+if [ -d ${SRCCONF} ]; then
+  echo "Copying config files from project..."
+  cp -v ${SRCCONF}/* $AMQ_HOME/conf/
+fi
+
+if [ -d ${SRCPATCH} ]; then
+   echo "############ Patch AMQ to 621186-04 - HF 4 ############"
+  chmod +x ${SRCPATCH}/*
+  chmod +x ${SRCPATCH}/lib/*
+
+  cp -v ${SRCPATCH}/lib/* $AMQ_HOME/lib/
+  cp -v ${SRCPATCH}/*.jar $AMQ_HOME/
+
+  echo "Delete old activemq lib -kahadb-store-5.11.0.redhat-621159.jar from image..."
+  rm $AMQ_HOME/lib/*.redhat-621159.jar
+
+  echo "Delete activemq-all-5.11.0.redhat-621159.jar from image..."
+  rm $AMQ_HOME/activemq-all-5.11.0.redhat-621159.jar
+
+  echo "############ End - Patch AMQ to 621186-04 - HF 4 ############"
+fi
+
+exit 0
